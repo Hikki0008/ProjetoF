@@ -1,0 +1,63 @@
+-- Criação do Banco de Dados
+CREATE DATABASE MercedesGerenciador;
+GO
+
+CREATE TABLE Clientes (
+    cpf VARCHAR(14) PRIMARY KEY,      -- CPF do Cliente como chave primária
+    nome VARCHAR(100) NOT NULL,       -- Nome do Cliente
+    telefone VARCHAR(20) NOT NULL,    -- Telefone do Cliente
+    email VARCHAR(100) NOT NULL       -- Email do Cliente
+);
+GO
+-- Inserindo Clientes (com email)
+INSERT INTO Clientes (cpf, nome, telefone, email) VALUES 
+('123.456.789-00', 'Gabriel Oliveira', '(11) 98765-4321', 'gabriel@email.com'),
+('987.654.321-00', 'Ana Silva', '(11) 91234-5678', 'ana@email.com');
+GO
+-- Criação da Tabela de Veículos
+CREATE TABLE Veiculos (
+    id INT IDENTITY(1,1) PRIMARY KEY,      -- ID do Veículo, chave primária auto-incrementada
+    modelo VARCHAR(100) NOT NULL,           -- Modelo do Veículo
+    ano INT NOT NULL,                       -- Ano de fabricação
+    placa VARCHAR(7) NOT NULL UNIQUE,       -- Placa do Veículo (única)
+    tipo VARCHAR(50) NOT NULL               -- Tipo do Veículo (ex: "Carro", "Caminhão")
+);
+GO
+-- Inserindo Veículos
+INSERT INTO Veiculos (modelo, ano, placa, tipo) VALUES 
+('Mercedes-Benz A200', 2020, 'ABC1D23', 'Carro'),
+('BMW X3', 2019, 'XYZ9A88', 'Carro');
+GO
+-- Criação da Tabela de Serviços
+CREATE TABLE Servicos (
+    id INT IDENTITY(1,1) PRIMARY KEY,      -- ID do Serviço, chave primária auto-incrementada
+    descricao VARCHAR(255) NOT NULL,        -- Descrição do Serviço
+    data DATE NOT NULL,                     -- Data do Serviço
+    valor DECIMAL(10, 2) NOT NULL,          -- Valor do Serviço
+    placaVeiculo VARCHAR(7) NOT NULL,       -- Placa do Veículo
+    cpfCliente VARCHAR(14) NOT NULL,        -- CPF do Cliente
+    FOREIGN KEY (placaVeiculo) REFERENCES Veiculos(placa),   -- Relacionamento com a tabela Veiculos
+    FOREIGN KEY (cpfCliente) REFERENCES Clientes(cpf)        -- Relacionamento com a tabela Clientes
+);
+GO
+-- Inserindo Serviços
+INSERT INTO Servicos (descricao, data, valor, placaVeiculo, cpfCliente) VALUES 
+('Troca de óleo', '2025-04-15', 200.00, 'ABC1D23', '123.456.789-00'),
+('Revisão geral', '2025-04-16', 500.00, 'XYZ9A88', '987.654.321-00');
+GO
+-- Criação da Tabela de Vendas
+CREATE TABLE Vendas (
+    id INT IDENTITY(1,1) PRIMARY KEY,      -- ID da Venda, chave primária auto-incrementada
+    valor DECIMAL(10, 2) NOT NULL,          -- Valor total da venda
+    data DATE NOT NULL,                     -- Data da Venda
+    cpfCliente VARCHAR(14) NOT NULL,        -- CPF do Cliente
+    placaVeiculo VARCHAR(7) NOT NULL,       -- Placa do Veículo
+    FOREIGN KEY (cpfCliente) REFERENCES Clientes(cpf),   -- Relacionamento com a tabela Clientes
+    FOREIGN KEY (placaVeiculo) REFERENCES Veiculos(placa) -- Relacionamento com a tabela Veiculos
+);
+GO
+-- Inserindo Vendas
+INSERT INTO Vendas (valor, data, cpfCliente, placaVeiculo) VALUES 
+(30000.00, '2025-04-10', '123.456.789-00', 'ABC1D23'),
+(35000.00, '2025-04-12', '987.654.321-00', 'XYZ9A88');
+GO
